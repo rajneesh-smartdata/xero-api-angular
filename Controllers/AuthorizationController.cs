@@ -61,11 +61,11 @@ namespace xero_api_angular.Controllers
 
         // GET /Authorization/Disconnect
         [HttpGet("Disconnect")]
-        public async Task<IActionResult> Disconnect()
+        public async Task<IActionResult> Disconnect(string TenantId)
         {
             var client = new XeroClient(XeroConfig.Value, httpClientFactory);
 
-            var xeroToken = TokenUtilities.GetStoredToken();
+            var xeroToken = TokenUtilities.GetStoredToken(TenantId);
             var utcTimeNow = DateTime.UtcNow;
 
             if (utcTimeNow > xeroToken.ExpiresAtUtc)
@@ -79,7 +79,7 @@ namespace xero_api_angular.Controllers
 
             await client.DeleteConnectionAsync(xeroToken, xeroTenant);
 
-            TokenUtilities.DestroyToken();
+            TokenUtilities.DestroyToken(TenantId);
 
             return Ok();
         }

@@ -17,9 +17,9 @@ export class AppService {
   setTokenData(data: any) {
     localStorage.setItem('TenantId', data.tenants[0].tenantId)
     localStorage.setItem('Tenant', JSON.stringify(data.tenants[0]))
-    localStorage.setItem('AccessToken', data.accessToken) //setItem('access_token', JSON.stringify(data.accessToken)
-    localStorage.setItem('RefreshToken', data.refreshToken)
-    localStorage.setItem('ExpiresAtUtc', data.expiresAtUtc)
+    //localStorage.setItem('AccessToken', data.accessToken) //setItem('access_token', JSON.stringify(data.accessToken)
+    //localStorage.setItem('RefreshToken', data.refreshToken)
+    //localStorage.setItem('ExpiresAtUtc', data.expiresAtUtc)
 
     this.tokenData.next(data);
   }
@@ -31,14 +31,13 @@ export class AppService {
   removeTokenData() {
     localStorage.removeItem('TenantId');
     localStorage.removeItem('Tenant')
-    localStorage.removeItem('AccessToken')
-    localStorage.removeItem('RefreshToken')
-    localStorage.removeItem('ExpiresAtUtc')
+    //localStorage.removeItem('AccessToken')
+    //localStorage.removeItem('RefreshToken')
+    //localStorage.removeItem('ExpiresAtUtc')
 
     // Set current token to an empty object
     this.tokenData.next({});
   }
-
 
   callback(data : XeroAuth): Observable<any> {
     this.loadingStateSubject.next(true)
@@ -55,20 +54,23 @@ export class AppService {
   }
 
   disconnectXero(): Observable<any> {
-    return this.http.get<any>(`${environment.apiURL}/Authorization/Disconnect`)
+    const params = new HttpParams()
+      .set('TenantId', localStorage.getItem('TenantId'));
+
+    return this.http.get<any>(`${environment.apiURL}/Authorization/Disconnect`, { params })
       .pipe(map(res => { this.loadingStateSubject.next(false); return res }));
   }
 
-  timesheetsAPI(data: XeroAuth): Observable<any> {
+  timesheetsAPI(): Observable<any> {
     this.loadingStateSubject.next(true)
-    //const params = new HttpParams()
-    //  .set('state', data.state);
+    const params = new HttpParams()
+      .set('TenantId', localStorage.getItem('TenantId'));
 
     //let headers = new HttpHeaders();
     //headers = headers.append('responseType', 'json');
 
-    return this.http.get<any>(`${environment.apiURL}/Payroll/Timesheets`)
-      .pipe(map(res => { this.loadingStateSubject.next(false); return res }));;
+    return this.http.get<any>(`${environment.apiURL}/Payroll/Timesheets`, { params })
+      .pipe(map(res => { this.loadingStateSubject.next(false); return res }));
 
   }
 

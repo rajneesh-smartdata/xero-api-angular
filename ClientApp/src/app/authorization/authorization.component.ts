@@ -1,5 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { XeroAuth } from '../app.model';
 import { AppService } from '../app.service';
@@ -14,8 +13,7 @@ export class AuthorizationComponent implements OnInit {
   Timesheets;
   Tenant;
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, private router: Router, private routerPath: ActivatedRoute,
-    private appService: AppService) { }
+  constructor(private router: Router, private routerPath: ActivatedRoute, private appService: AppService) { }
 
   ngOnInit() {
     this.xeroAuth = null
@@ -29,7 +27,7 @@ export class AuthorizationComponent implements OnInit {
       }
     });
 
-    console.log('xeroAuth', this.xeroAuth);
+    //console.log('xeroAuth', this.xeroAuth);
     if (this.xeroAuth.error) {
       alert(this.xeroAuth.error);
       this.router.navigate(['/'])
@@ -37,7 +35,7 @@ export class AuthorizationComponent implements OnInit {
     else {
       this.appService.callback(this.xeroAuth)
         .subscribe((response) => {
-          console.log('callback', response)
+          //console.log('callback', response)
           this.XeroOAuth2Token = response;
           this.Tenant = response.tenants[0]
           this.appService.setTokenData(response);
@@ -57,9 +55,9 @@ export class AuthorizationComponent implements OnInit {
 
   getTimesheets() {
     this.Timesheets = [];
-    this.appService.timesheetsAPI(this.xeroAuth)
+    this.appService.timesheetsAPI()
       .subscribe((response) => {
-        console.log('timesheetsAPI', response)
+        //console.log('timesheetsAPI', response)
         this.Timesheets = response;
       },
         error => {
